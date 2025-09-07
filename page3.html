@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Page 3 - Fixed Columns + Slider</title>
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  overflow: hidden;
+  display: flex;
+  background: #2a2a2a;
+}
+
+/* Columns */
+.column {
+  flex: 1;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: #fff;
+  box-sizing: border-box;
+  position: relative;
+  min-width: 150px; /* ensures all columns visible on narrow screens */
+}
+
+.column h1 {
+  margin: 0 0 20px 0;
+  font-size: 2.5em;
+  text-shadow: 1px 1px 8px rgba(0,0,0,0.5);
+}
+
+.btn {
+  padding: 12px 25px;
+  font-size: 1.2em;
+  font-weight: bold;
+  border-radius: 15px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+  color: #fff;
+  background: rgba(255,255,255,0.1);
+}
+
+.btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(255,255,255,0.5);
+}
+
+/* Column colors */
+.column:nth-child(1) { background: #5B8FB9; }
+.column:nth-child(2) { background: #7B5C9B; }
+.column:nth-child(3) { background: #B57C5A; }
+.column:nth-child(4) { background: #5AA575; }
+
+/* Slider Modal */
+.slider-modal {
+  display: none;
+  position: fixed;
+  z-index: 10;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.85);
+  padding-top: 60px;
+}
+
+.slider-content {
+  position: relative;
+  margin: auto;
+  max-width: 80%;
+  height: 70%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.slide {
+  display: none;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(255,255,255,0.5);
+  transition: opacity 0.5s ease;
+}
+
+.prev, .next {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  padding: 12px;
+  color: #fff;
+  font-weight: bold;
+  font-size: 2em;
+  user-select: none;
+}
+.prev { left: 10px; }
+.next { right: 10px; }
+.prev:hover, .next:hover { color: #f1f1f1; }
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 35px;
+  color: #fff;
+  font-size: 3em;
+  font-weight: bold;
+  cursor: pointer;
+}
+.close-btn:hover { color: #f1f1f1; }
+
+/* Particles */
+.particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  animation: float 8s linear infinite;
+  pointer-events: none;
+}
+@keyframes float {
+  0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+}
+
+/* Floating cursor image */
+#floatingImg {
+  position: absolute;
+  top: 20px;
+  left: 50px;
+  width: 150px;
+  opacity: 0.8;
+  transition: left 0.2s ease;
+  z-index: 2;
+}
+#nextBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #ff69b4;
+  color: #fff;
+  border: none;
+  padding: 12px 25px;
+  font-size: 1.2em;
+  border-radius: 25px;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(255,105,180,0.6);
+  transition: transform 0.3s, box-shadow 0.3s;
+  z-index: 100;
+}
+
+#nextBtn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 25px rgba(255,105,180,0.9);
+}
+</style>
+</head>
+<body>
+
+<img id="floatingImg" src="sreee.png" alt="Floating">
+
+<!-- Columns -->
+<div class="column">
+  <h1>Sky</h1>
+  <button class="btn" data-slider="sliderSky">Sky Photos</button>
+</div>
+<div class="column">
+  <h1>Trizz</h1>
+  <button class="btn" data-slider="sliderTrizz">Trizz Photos</button>
+</div>
+<div class="column">
+  <h1>Princi</h1>
+  <button class="btn" data-slider="sliderPrinci">Princi Photos</button>
+</div>
+<div class="column">
+  <h1>Maverick</h1>
+  <button class="btn" data-slider="sliderMaverick">Maverick Photos</button>
+</div>
+
+<!-- Sliders -->
+<div id="sliderSky" class="slider-modal">
+  <span class="close-btn">&times;</span>
+  <div class="slider-content">
+    <img class="slide" src="imgs\Screenshot (179).png">
+    <img class="slide" src="imgs\Screenshot (164).png">
+    <img class="slide" src="imgs\Screenshot (212).png">
+    <img class="slide" src="imgs\Screenshot (229).png">
+    <img class="slide" src="imgs\Screenshot (275).png">
+    <img class="slide" src="imgs\Screenshot (310).png">
+  </div>
+  <span class="prev">&#10094;</span>
+  <span class="next">&#10095;</span>
+</div>
+
+<div id="sliderTrizz" class="slider-modal">
+  <span class="close-btn">&times;</span>
+  <div class="slider-content">
+    <img class="slide" src="trizz1.jpg">
+    <img class="slide" src="trizz2.jpg">
+  </div>
+  <span class="prev">&#10094;</span>
+  <span class="next">&#10095;</span>
+</div>
+
+<div id="sliderPrinci" class="slider-modal">
+  <span class="close-btn">&times;</span>
+  <div class="slider-content">
+    <img class="slide" src="princi1.jpg">
+    <img class="slide" src="princi2.jpg">
+  </div>
+  <span class="prev">&#10094;</span>
+  <span class="next">&#10095;</span>
+</div>
+
+<div id="sliderMaverick" class="slider-modal">
+  <span class="close-btn">&times;</span>
+  <div class="slider-content">
+    <img class="slide" src="imgs/mave.jpg">
+    <img class="slide" src="maverick2.jpg">
+  </div>
+  <span class="prev">&#10094;</span>
+  <span class="next">&#10095;</span>
+</div>
+<button id="nextBtn">Next →</button>
+
+
+<script>
+  document.getElementById('nextBtn').addEventListener('click', () => {
+  // Optional: add a smooth fade out animation before navigation
+  document.body.style.transition = 'opacity 0.8s';
+  document.body.style.opacity = '0';
+  setTimeout(() => {
+    window.location.href = 'page4.html'; // replace with your actual page 4 file
+  }, 800);
+});
+// Particles
+for(let i=0;i<40;i++){
+  const p=document.createElement('div');
+  p.className='particle';
+  p.style.left=Math.random()*window.innerWidth+'px';
+  p.style.width=p.style.height=(Math.random()*4+2)+'px';
+  p.style.animationDuration=(5+Math.random()*10)+'s';
+  document.body.appendChild(p);
+}
+
+// Floating image follows cursor
+const floatingImg = document.getElementById('floatingImg');
+document.addEventListener('mousemove', e=>{
+  let mouseX = e.clientX - floatingImg.offsetWidth/2;
+  if(mouseX<0) mouseX=0;
+  if(mouseX>window.innerWidth-floatingImg.offsetWidth) mouseX=window.innerWidth-floatingImg.offsetWidth;
+  floatingImg.style.left = mouseX+'px';
+});
+
+// Slider logic
+let currentSlider=null;
+let slideIndex=0;
+
+function showSlide(n){
+  const slides=currentSlider.querySelectorAll('.slide');
+  slides.forEach(s=>s.style.display='none');
+  slides[n].style.display='block';
+}
+
+// Open slider
+document.querySelectorAll('.btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    currentSlider=document.getElementById(btn.dataset.slider);
+    currentSlider.style.display='block';
+    slideIndex=0;
+    showSlide(slideIndex);
+  });
+});
+
+// Close slider
+document.querySelectorAll('.close-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    btn.parentElement.style.display='none';
+  });
+});
+
+// Next / Prev
+document.querySelectorAll('.next').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    currentSlider=btn.parentElement;
+    const slides=currentSlider.querySelectorAll('.slide');
+    slideIndex=(slideIndex+1)%slides.length;
+    showSlide(slideIndex);
+  });
+});
+document.querySelectorAll('.prev').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    currentSlider=btn.parentElement;
+    const slides=currentSlider.querySelectorAll('.slide');
+    slideIndex=(slideIndex-1+slides.length)%slides.length;
+    showSlide(slideIndex);
+  });
+});
+
+// Close by clicking outside
+document.querySelectorAll('.slider-modal').forEach(modal=>{
+  modal.addEventListener('click', e=>{
+    if(e.target===modal) modal.style.display='none';
+  });
+});
+</script>
+
+</body>
+</html>

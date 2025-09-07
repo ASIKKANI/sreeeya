@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birthday Surprise</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: #9112BC;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    overflow: hidden;
+  }
+  /* Overlay animation */
+  .overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #9112BC;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: fadeOut 1s ease forwards;
+    animation-delay: 5s;
+  }
+  .overlay-text {
+    font-size: 2.5em;
+    color: #fff;
+    text-shadow: 0 0 15px #fff, 0 0 30px #ff69b4;
+    animation: glowText 5s ease-in-out;
+  }
+  @keyframes glowText {
+    0% { opacity: 0; }
+    25% { opacity: 1; }
+    75% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @keyframes fadeOut { to { opacity:0; visibility:hidden; } }
+
+  /* Moving particles */
+  .particle { position: absolute; background: rgba(255,255,255,0.7); border-radius: 50%; animation: float 10s linear infinite; }
+  @keyframes float { from { transform: translateY(100vh); opacity:0; } 50%{opacity:1;} to{transform:translateY(-10vh); opacity:0;} }
+
+  /* Cake */
+  .cake-container { position: relative; width: 400px; height: 300px; margin: 0 auto; top: 100px; display: none; }
+  .cake-layer { position: absolute; bottom: 0; left:50%; transform: translateX(-50%); width: 100%; height: 100px; background: #ffb347; border-radius: 20px; box-shadow: inset 0 -10px #ffa07a; }
+  .cake-layer.middle { bottom:100px; width:80%; background:#ff9999; }
+  .cake-layer.top { bottom:200px; width:60%; background:#fff0f5; }
+  .icing { position: absolute; top:0; width:100%; height:25px; background:#fff; border-radius:20px 20px 0 0; box-shadow: inset 0 -5px #ffe4e1; }
+
+  /* Candles */
+  .candle-tray { position: fixed; bottom: 20px; left:50%; transform:translateX(-50%); display:flex; gap:15px; z-index:50; }
+  .candle { width:20px; height:60px; background:#ff69b4; border-radius:3px; position:relative; cursor:grab; }
+  .flame { width:15px; height:20px; background: radial-gradient(circle, yellow 0%, orange 70%, transparent 100%); border-radius:50%; position:absolute; top:-20px; left:50%; transform:translateX(-50%); animation: flicker 0.3s infinite; }
+  @keyframes flicker {0%,100%{transform:translateX(-50%) scale(1); opacity:1;}50%{transform:translateX(-50%) scale(1.1); opacity:0.8;}}
+  
+  .message { position: fixed; top:40%; left:50%; transform:translate(-50%, -50%); font-size:3em; font-weight:bold; color:#fff; text-shadow:0 0 20px #ff69b4,0 0 40px #ff1493; display:none; z-index:1000; }
+  .hint { position: fixed; top:20px; left:50%; transform:translateX(-50%); font-size:1.2em; color:#fff; text-shadow:0 0 10px #000; }
+
+  /* Instruction and counter on right side */
+  #instruction { position: fixed; top:50px; right:30px; font-size:1.5em; z-index:100; text-align:right; }
+  #candleCount { position: fixed; top:90px; right:30px; font-size:1.2em; z-index:100; text-align:right; }
+  #ashik {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 0 10px #ff69b4, 0 0 20px #ff1493;
+  animation: floatText 3s ease-in-out infinite alternate;
+  z-index: 100;
+}
+
+@keyframes floatText {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-10px); }
+}
+</style>
+</head>
+<body>
+  
+<div class="overlay"><div class="overlay-text">A Surprise Awaits…</div></div>
+
+<!-- Instruction & counter on right -->
+<div id="instruction">Add 18 candles</div>
+<div id="candleCount">Candles added: 0</div>
+
+<div class="cake-container">
+  <div class="cake-layer bottom"><div class="icing"></div></div>
+  <div class="cake-layer middle"><div class="icing"></div></div>
+  <div class="cake-layer top"><div class="icing"></div></div>
+</div>
+
+<div class="candle-tray">
+  <div class="candle"><div class="flame"></div></div>
+</div>
+
+<div class="hint">🎂 Drag candles onto the cake!</div>
+<div class="message">Happy Birthday Sreeya 🎂✨</div>
+<div id="ashik">Ashik</div>
+
+<script>
+// Particles
+for(let i=0;i<40;i++){
+  let p=document.createElement('div');
+  p.className='particle';
+  p.style.width=p.style.height=(Math.random()*6+4)+'px';
+  p.style.left=Math.random()*window.innerWidth+'px';
+  p.style.top=Math.random()*window.innerHeight+'px';
+  p.style.animationDuration=(5+Math.random()*10)+'s';
+  document.querySelector('.overlay').appendChild(p);
+}
+
+// Show cake after overlay
+setTimeout(()=>{document.querySelector('.cake-container').style.display='block';},5000);
+
+const trayCandles = document.querySelectorAll('.candle-tray .candle');
+const cake = document.querySelector('.cake-container');
+let candleCount = 0;
+
+// Drag & drop cloning
+trayCandles.forEach(candle => {
+  candle.addEventListener('dragstart', e => e.preventDefault()); // prevent default drag image
+  candle.addEventListener('mousedown', e => {
+    const clone = candle.cloneNode(true);
+    clone.style.position = 'absolute';
+    clone.style.zIndex = '20';
+    document.body.appendChild(clone);
+
+    function moveAt(pageX, pageY){
+      clone.style.left = pageX - clone.offsetWidth/2 + 'px';
+      clone.style.top = pageY - clone.offsetHeight/2 + 'px';
+    }
+
+    moveAt(e.pageX, e.pageY);
+
+    function onMouseMove(e){
+      moveAt(e.pageX, e.pageY);
+    }
+    document.addEventListener('mousemove', onMouseMove);
+
+    clone.onmouseup = function(event){
+      document.removeEventListener('mousemove', onMouseMove);
+      clone.onmouseup = null;
+
+      const cakeRect = cake.getBoundingClientRect();
+      const cloneRect = clone.getBoundingClientRect();
+      if(cloneRect.bottom >= cakeRect.top){
+        // Snap clone to cake
+        clone.style.left = Math.min(Math.max(cloneRect.left, cakeRect.left), cakeRect.right - clone.offsetWidth) + 'px';
+        clone.style.top = cloneRect.top - cakeRect.top + 'px';
+        candleCount++;
+        updateCounter();
+      } else {
+        // Remove if dropped outside
+        clone.remove();
+      }
+    };
+  });
+});
+
+function updateCounter(){
+  document.getElementById('candleCount').textContent = 'Candles added: ' + candleCount;
+}
+
+// Mic blow detection
+navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+  const audioContext=new AudioContext();
+  const analyser=audioContext.createAnalyser();
+  const mic=audioContext.createMediaStreamSource(stream);
+  mic.connect(analyser);
+  const data=new Uint8Array(analyser.frequencyBinCount);
+  function checkBlow(){
+    analyser.getByteFrequencyData(data);
+    let volume=data.reduce((a,b)=>a+b)/data.length;
+    if(volume>60){
+      document.querySelectorAll('.flame').forEach(f=>f.style.display='none');
+      celebrate();
+    }
+    requestAnimationFrame(checkBlow);
+  }
+  checkBlow();
+});
+
+function celebrate(){
+  const message=document.querySelector('.message');
+  message.style.display='block';
+  for(let i=0;i<100;i++){
+    const confetti=document.createElement('div');
+    confetti.className='confetti';
+    confetti.style.backgroundColor=`hsl(${Math.random()*360},100%,50%)`;
+    confetti.style.position='fixed';
+    confetti.style.left=Math.random()*window.innerWidth+'px';
+    confetti.style.top='-10px';
+    confetti.style.width=confetti.style.height=(Math.random()*8+4)+'px';
+    document.body.appendChild(confetti);
+    let fall=confetti.animate([{transform:'translateY(0)'},{transform:`translateY(${window.innerHeight+20}px)`}],{duration:Math.random()*3000+2000,iterations:1});
+    fall.onfinish=()=>confetti.remove();
+  }
+  setTimeout(()=>{window.location.href='birthday_spotify_page.html';},5000);
+}
+</script>
+</body>
+</html>

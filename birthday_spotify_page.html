@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birthday Spotify Player</title>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  background: #9112BC;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: #fff;
+  overflow: hidden;
+  position: relative;
+}
+/* Background gradient animation */
+body::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(270deg, #9112BC, #D661FF, #9112BC);
+  background-size: 600% 600%;
+  animation: gradientBG 20s ease infinite;
+  z-index: -2;
+}
+@keyframes gradientBG {
+  0% {background-position:0% 50%;}
+  50% {background-position:100% 50%;}
+  100% {background-position:0% 50%;}
+}
+/* Floating particles */
+.particle {
+  position: absolute;
+  background: rgba(255,255,255,0.5);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: float 10s linear infinite;
+  z-index: -1;
+}
+@keyframes float {
+  0% {transform: translateY(100vh) scale(0.5); opacity:0;}
+  50% {opacity:1;}
+  100% {transform: translateY(-10vh) scale(1); opacity:0;}
+}
+.player-container {
+  text-align: center;
+  opacity: 0;
+  transform: translateY(50px);
+  animation: slideIn 2s forwards;
+  position: relative;
+  z-index: 1;
+}
+@keyframes slideIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+.album-art {
+  width: 600px;
+  height: 500px;
+  border-radius: 20px;
+  background-image: url('./art1.jpg'); /* your local image */
+  background-size: cover;
+  background-position: center;
+  margin: 0 auto 20px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+.song-title {
+  font-size: 1.8em;
+  margin-bottom: 5px;
+}
+.artist {
+  font-size: 1.2em;
+  margin-bottom: 20px;
+}
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+.control-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #fff;
+  color: #9112BC;
+  font-size: 1.5em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+.progress-container {
+  width: 80%;
+  height: 10px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 5px;
+  margin: 20px auto 0;
+  overflow: hidden;
+}
+.progress {
+  width: 0;
+  height: 100%;
+  background: #fff;
+  border-radius: 5px;
+}
+.time {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+  margin: 5px auto 0;
+  font-size: 0.9em;
+}
+.trizz {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 0 10px #fff, 0 0 20px #ff69b4;
+  animation: glowText 2s ease-in-out infinite alternate;
+}
+@keyframes glowText {
+  0% {text-shadow: 0 0 5px #fff, 0 0 10px #ff69b4;}
+  50% {text-shadow: 0 0 15px #fff, 0 0 30px #ff69b4;}
+  100% {text-shadow: 0 0 5px #fff, 0 0 10px #ff69b4;}
+}
+.next-page-btn {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  background: #fff;
+  color: #9112BC;
+  font-weight: bold;
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.next-page-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px #fff;
+}
+</style>
+</head>
+<body>
+<div class="trizz">Trisha</div>
+<div class="player-container">
+  <div class="album-art" id="albumArt"></div>
+
+  <div class="song-title" id="songTitle">Song Title</div>
+  <div class="artist" id="artistName">Artist Name</div>
+  <div class="controls">
+    <div class="control-btn" id="prevBtn">⏮</div>
+    <div class="control-btn" id="playBtn">▶</div>
+    <div class="control-btn" id="nextBtn">⏭</div>
+  </div>
+  <div class="progress-container">
+    <div class="progress" id="progressBar"></div>
+  </div>
+  <div class="time">
+    <span id="currentTime">0:00</span>
+    <span id="duration">0:00</span>
+  </div>
+</div>
+
+<a href="page3.html" class="next-page-btn">Next →</a>
+
+<script>
+  
+
+const songs = [
+  {title: 'Birthday Song ', artist: 'Friend', src: 'audio\\piano.mp3', art: 'art1.jpg'}
+];
+let currentSong = 0;
+
+const audio = new Audio();
+const playBtn = document.getElementById('playBtn');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const progressBar = document.getElementById('progressBar');
+const currentTimeEl = document.getElementById('currentTime');
+const durationEl = document.getElementById('duration');
+const songTitle = document.getElementById('songTitle');
+const artistName = document.getElementById('artistName');
+const albumArt = document.getElementById('albumArt');
+
+function loadSong(index){
+  audio.src = songs[index].src;
+  songTitle.textContent = songs[index].title;
+  artistName.textContent = songs[index].artist;
+  albumArt.style.backgroundImage = `url('${songs[index].art}')`;
+  audio.load();
+}
+
+playBtn.addEventListener('click', ()=>{
+  if(audio.paused){ audio.play(); playBtn.textContent = '⏸'; }
+  else { audio.pause(); playBtn.textContent = '▶'; }
+});
+prevBtn.addEventListener('click', ()=>{
+  currentSong = (currentSong - 1 + songs.length) % songs.length;
+  loadSong(currentSong);
+  audio.play(); playBtn.textContent='⏸';
+});
+nextBtn.addEventListener('click', ()=>{
+  currentSong = (currentSong + 1) % songs.length;
+  loadSong(currentSong);
+  audio.play(); playBtn.textContent='⏸';
+});
+
+audio.addEventListener('loadedmetadata', ()=>{ durationEl.textContent = formatTime(audio.duration); });
+audio.addEventListener('timeupdate', ()=>{
+  const progressPercent = (audio.currentTime/audio.duration)*100;
+  progressBar.style.width = progressPercent+'%';
+  currentTimeEl.textContent = formatTime(audio.currentTime);
+});
+function formatTime(time){
+  const minutes = Math.floor(time/60);
+  const seconds = Math.floor(time%60);
+  return `${minutes}:${seconds<10?'0':''}${seconds}`;
+}
+
+// Load initial song
+loadSong(currentSong);
+
+// Generate background particles
+for(let i=0;i<30;i++){
+  const p=document.createElement('div');
+  p.className='particle';
+  const size=Math.random()*6+4;
+  p.style.width=p.style.height=size+'px';
+  p.style.left=Math.random()*window.innerWidth+'px';
+  p.style.animationDuration=(5+Math.random()*10)+'s';
+  document.body.appendChild(p);
+}
+</script>
+</body>
+</html>

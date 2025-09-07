@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birthday Audio Party</title>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(120deg, #9112BC, #6A0DAD);
+  font-family: 'Comic Sans MS', cursive, sans-serif;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  color: #fff;
+  position: relative;
+}
+
+/* Particles background */
+.particle { position: absolute; background: rgba(255,255,255,0.7); border-radius: 50%; animation: float 10s linear infinite; }
+@keyframes float { from { transform: translateY(100vh); opacity:0; } 50%{opacity:1;} to{transform:translateY(-10vh); opacity:0;} }
+
+/* Main message */
+#partyMessage {
+  font-size: 3em;
+  text-align: center;
+  text-shadow: 0 0 20px #ff69b4, 0 0 40px #ff1493;
+  margin-bottom: 50px;
+}
+
+/* Buttons */
+.audioBtn {
+  background: #ff69b4;
+  color: #fff;
+  border: none;
+  padding: 15px 30px;
+  margin: 10px;
+  font-size: 1.2em;
+  border-radius: 25px;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(255,105,180,0.6);
+  transition: transform 0.3s, box-shadow 0.3s;
+  position: relative;
+}
+
+.audioBtn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 25px rgba(255,105,180,0.9);
+}
+
+/* Footer text */
+#ashik {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 0 10px #ff69b4, 0 0 20px #ff1493;
+  animation: floatText 3s ease-in-out infinite alternate;
+  z-index: 100;
+}
+@keyframes floatText {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-10px); }
+}
+</style>
+</head>
+<body>
+
+<div id="partyMessage">🎉 Audio Party Time! 🎶</div>
+
+<!-- Buttons for 6 audios -->
+<div id="audioButtons">
+  <button class="audioBtn" data-audio="audio\sree-audio-2.opus"> 1</button>
+  <button class="audioBtn" data-audio="audio\sree-audio-1.ogg"> 2</button>
+  <button class="audioBtn" data-audio="audio\sree-audio-3.ogg"> 3</button>
+  <button class="audioBtn" data-audio="audio\sree-audio-4.opus"> 4</button>
+  <button class="audioBtn" data-audio="audio\sree-audio-5.opus">5</button>
+  <button class="audioBtn" data-audio="audio\sree-audio-6.opus"> 6</button>
+</div>
+
+<div id="ashik">Ashik</div>
+
+<script>
+// Floating particles
+for(let i=0;i<50;i++){
+  let p=document.createElement('div');
+  p.className='particle';
+  p.style.width=p.style.height=(Math.random()*6+4)+'px';
+  p.style.left=Math.random()*window.innerWidth+'px';
+  p.style.top=Math.random()*window.innerHeight+'px';
+  p.style.animationDuration=(5+Math.random()*10)+'s';
+  document.body.appendChild(p);
+}
+
+// Audio buttons functionality
+const buttons = document.querySelectorAll('.audioBtn');
+buttons.forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    // Play audio
+    const audioSrc = btn.getAttribute('data-audio');
+    const audio = new Audio(audioSrc);
+    audio.play();
+
+    // Confetti animation
+    for(let i=0;i<50;i++){
+      const confetti = document.createElement('div');
+      confetti.style.position = 'fixed';
+      confetti.style.left = Math.random()*window.innerWidth+'px';
+      confetti.style.top = '-10px';
+      confetti.style.width = confetti.style.height = (Math.random()*8+4)+'px';
+      confetti.style.backgroundColor = `hsl(${Math.random()*360}, 100%, 50%)`;
+      confetti.style.borderRadius = '50%';
+      confetti.style.zIndex = '100';
+      document.body.appendChild(confetti);
+      const fall = confetti.animate([{transform:'translateY(0)'},{transform:`translateY(${window.innerHeight+20}px)`}],{
+        duration: Math.random()*2000+2000,
+        iterations: 1
+      });
+      fall.onfinish = ()=>confetti.remove();
+    }
+  });
+});
+</script>
+</body>
+</html>
